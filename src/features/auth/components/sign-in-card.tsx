@@ -23,13 +23,16 @@ type SignInData = { email: string; password: string };
 const SignInCard: React.FC<SignInCardProps> = ({ setAuthState }) => {
   const { signIn } = useAuthActions();
   const [data, setData] = useState<SignInData>({ email: "", password: "" });
+  const [isPending, setIsPending] = useState(false);
 
   const handleChange = (key: keyof SignInData, value: string) => {
     setData((prev) => ({ ...prev, [key]: value }));
   };
 
-  const onProviderSignIn = (value: "github" | "google") => {
-    signIn(value);
+  const onProviderSignIn = async (value: "github" | "google") => {
+    setIsPending(true);
+    await signIn(value);
+    setIsPending(false);
   };
 
   return (
@@ -43,7 +46,7 @@ const SignInCard: React.FC<SignInCardProps> = ({ setAuthState }) => {
       <CardContent className="space-y-5 px-0 pb-0">
         <form className="space-y-2.5">
           <Input
-            disabled={false}
+            disabled={isPending}
             value={data.email}
             onChange={(e) => {
               handleChange("email", e.target.value);
@@ -53,7 +56,7 @@ const SignInCard: React.FC<SignInCardProps> = ({ setAuthState }) => {
             required
           />
           <Input
-            disabled={false}
+            disabled={isPending}
             value={data.password}
             onChange={(e) => {
               handleChange("password", e.target.value);
@@ -62,32 +65,37 @@ const SignInCard: React.FC<SignInCardProps> = ({ setAuthState }) => {
             type="password"
             required
           />
-          <Button type="submit" className="w-full" size="lg" disabled={false}>
+          <Button
+            type="submit"
+            className="w-full"
+            size="lg"
+            disabled={isPending}
+          >
             Continue
           </Button>
         </form>
         <Separator />
         <div className="flex flex-col gap-y-2.5">
           <Button
-            disabled={false}
+            disabled={isPending}
             onClick={() => {
               onProviderSignIn("google");
             }}
             variant="outline"
             size="lg"
-            className="w-full relative"
+            className="w-full relative font-bold"
           >
             <FcGoogle className="size-5 absolute top-3 left-3" />
             Continue with Google
           </Button>
           <Button
-            disabled={false}
+            disabled={isPending}
             onClick={() => {
               onProviderSignIn("github");
             }}
             variant="outline"
             size="lg"
-            className="w-full relative"
+            className="w-full relative font-bold"
           >
             <FaGithub className="size-5 absolute top-3 left-3" />
             Continue with GitHub
