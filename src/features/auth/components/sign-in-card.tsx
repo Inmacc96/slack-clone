@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
@@ -10,8 +11,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { AuthState } from "../types";
-import { useState } from "react";
 
 interface SignInCardProps {
   setAuthState: (state: AuthState) => void;
@@ -20,10 +21,15 @@ interface SignInCardProps {
 type SignInData = { email: string; password: string };
 
 const SignInCard: React.FC<SignInCardProps> = ({ setAuthState }) => {
+  const { signIn } = useAuthActions();
   const [data, setData] = useState<SignInData>({ email: "", password: "" });
 
   const handleChange = (key: keyof SignInData, value: string) => {
     setData((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleProviderSignIn = (value: "github" | "google") => {
+    signIn(value);
   };
 
   return (
@@ -74,7 +80,9 @@ const SignInCard: React.FC<SignInCardProps> = ({ setAuthState }) => {
           </Button>
           <Button
             disabled={false}
-            onClick={() => {}}
+            onClick={() => {
+              handleProviderSignIn("github");
+            }}
             variant="outline"
             size="lg"
             className="w-full relative"
