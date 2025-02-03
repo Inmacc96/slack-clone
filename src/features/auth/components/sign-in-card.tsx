@@ -28,7 +28,7 @@ const SignInCard: React.FC<SignInCardProps> = ({ setAuthState }) => {
     setData((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleProviderSignIn = (value: "github" | "google") => {
+  const onProviderSignIn = (value: "github" | "google") => {
     signIn(value);
   };
 
@@ -70,7 +70,9 @@ const SignInCard: React.FC<SignInCardProps> = ({ setAuthState }) => {
         <div className="flex flex-col gap-y-2.5">
           <Button
             disabled={false}
-            onClick={() => {}}
+            onClick={() => {
+              onProviderSignIn("google");
+            }}
             variant="outline"
             size="lg"
             className="w-full relative"
@@ -81,7 +83,7 @@ const SignInCard: React.FC<SignInCardProps> = ({ setAuthState }) => {
           <Button
             disabled={false}
             onClick={() => {
-              handleProviderSignIn("github");
+              onProviderSignIn("github");
             }}
             variant="outline"
             size="lg"
