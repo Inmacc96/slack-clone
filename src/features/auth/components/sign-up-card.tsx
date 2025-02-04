@@ -18,11 +18,17 @@ import { TriangleAlert } from "lucide-react";
 interface SignUpCardProps {
   setAuthState: (state: AuthState) => void;
 }
-type SignUpData = { email: string; password: string; confirmPassword: string };
+type SignUpData = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
 
 const SignUpCard: React.FC<SignUpCardProps> = ({ setAuthState }) => {
   const { signIn } = useAuthActions();
   const [data, setData] = useState<SignUpData>({
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -55,8 +61,8 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ setAuthState }) => {
 
     setIsPending(true);
     try {
-      const { email, password } = data;
-      await signIn("password", { email, password, flow: "signUp" });
+      const { name, email, password } = data;
+      await signIn("password", { name, email, password, flow: "signUp" });
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Something went wrong");
@@ -87,6 +93,15 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ setAuthState }) => {
       )}
       <CardContent className="space-y-5 px-0 pb-0">
         <form className="space-y-2.5" onSubmit={onPasswordSignUp}>
+          <Input
+            disabled={isPending}
+            value={data.name}
+            onChange={(e) => {
+              handleChange("name", e.target.value);
+            }}
+            placeholder="Full name"
+            required
+          />
           <Input
             disabled={isPending}
             value={data.email}
@@ -135,7 +150,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ setAuthState }) => {
             }}
             variant="outline"
             size="lg"
-            className="w-full relative"
+            className="w-full relative font-bold"
           >
             <FcGoogle className="size-5 absolute top-3 left-3" />
             Continue with Google
@@ -147,7 +162,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ setAuthState }) => {
             }}
             variant="outline"
             size="lg"
-            className="w-full relative"
+            className="w-full relative font-bold"
           >
             <FaGithub className="size-5 absolute top-3 left-3" />
             Continue with GitHub
