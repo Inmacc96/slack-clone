@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { TriangleAlert } from "lucide-react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { AuthState } from "../types";
 
@@ -24,9 +25,23 @@ const SignInCard: React.FC<SignInCardProps> = ({ setAuthState }) => {
   const { signIn } = useAuthActions();
   const [data, setData] = useState<SignInData>({ email: "", password: "" });
   const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (key: keyof SignInData, value: string) => {
     setData((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const onPasswordSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsPending(true);
+    try {
+      await signIn("password", { ...data, flow: "signIn" });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      setError("Invalid email or password");
+    } finally {
+      setIsPending(false);
+    }
   };
 
   const onProviderSignIn = async (value: "github" | "google") => {
@@ -43,8 +58,14 @@ const SignInCard: React.FC<SignInCardProps> = ({ setAuthState }) => {
           Use your email or another service to continue
         </CardDescription>
       </CardHeader>
+      {!!error && (
+        <div className="bg-destructive/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-destructive mb-6">
+          <TriangleAlert className="size-4" />
+          <p>{error}</p>
+        </div>
+      )}
       <CardContent className="space-y-5 px-0 pb-0">
-        <form className="space-y-2.5">
+        <form className="space-y-2.5" onSubmit={onPasswordSignIn}>
           <Input
             disabled={isPending}
             value={data.email}
