@@ -12,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { TriangleAlert } from "lucide-react";
 
 interface SignUpCardProps {
   setAuthState: (state: AuthState) => void;
@@ -19,15 +21,56 @@ interface SignUpCardProps {
 type SignUpData = { email: string; password: string; confirmPassword: string };
 
 const SignUpCard: React.FC<SignUpCardProps> = ({ setAuthState }) => {
+  const { signIn } = useAuthActions();
   const [data, setData] = useState<SignUpData>({
     email: "",
     password: "",
     confirmPassword: "",
   });
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (key: keyof SignUpData, value: string) => {
     setData((prev) => ({ ...prev, [key]: value }));
   };
+
+  const validateForm = () => {
+    const { password, confirmPassword } = data;
+    if (password.length < 8) {
+      return { message: "Password must be at least 8 characters" };
+    }
+    if (password !== confirmPassword) {
+      return { message: "Passwords do not match" };
+    }
+    return {};
+  };
+
+  const onPasswordSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const errors = validateForm();
+    if (errors.message) {
+      setError(errors.message);
+      return;
+    }
+
+    setIsPending(true);
+    try {
+      const { email, password } = data;
+      await signIn("password", { email, password, flow: "signUp" });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      setError("Something went wrong");
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  const onProviderSignUp = async (value: "github" | "google") => {
+    setIsPending(true);
+    await signIn(value);
+    setIsPending(false);
+  };
+
   return (
     <Card className="w-full h-full p-8">
       <CardHeader className="px-0 pt-0">
@@ -36,10 +79,16 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ setAuthState }) => {
           Use your email or another service to continue
         </CardDescription>
       </CardHeader>
+      {!!error && (
+        <div className="bg-destructive/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-destructive mb-6">
+          <TriangleAlert className="size-4" />
+          <p>{error}</p>
+        </div>
+      )}
       <CardContent className="space-y-5 px-0 pb-0">
-        <form className="space-y-2.5">
+        <form className="space-y-2.5" onSubmit={onPasswordSignUp}>
           <Input
-            disabled={false}
+            disabled={isPending}
             value={data.email}
             onChange={(e) => {
               handleChange("email", e.target.value);
@@ -49,7 +98,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ setAuthState }) => {
             required
           />
           <Input
-            disabled={false}
+            disabled={isPending}
             value={data.password}
             onChange={(e) => {
               handleChange("password", e.target.value);
@@ -59,7 +108,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ setAuthState }) => {
             required
           />
           <Input
-            disabled={false}
+            disabled={isPending}
             value={data.confirmPassword}
             onChange={(e) => {
               handleChange("confirmPassword", e.target.value);
@@ -68,15 +117,22 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ setAuthState }) => {
             type="password"
             required
           />
-          <Button type="submit" className="w-full" size="lg" disabled={false}>
+          <Button
+            type="submit"
+            className="w-full"
+            size="lg"
+            disabled={isPending}
+          >
             Continue
           </Button>
         </form>
         <Separator />
         <div className="flex flex-col gap-y-2.5">
           <Button
-            disabled={false}
-            onClick={() => {}}
+            disabled={isPending}
+            onClick={() => {
+              onProviderSignUp("google");
+            }}
             variant="outline"
             size="lg"
             className="w-full relative"
@@ -85,8 +141,10 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ setAuthState }) => {
             Continue with Google
           </Button>
           <Button
-            disabled={false}
-            onClick={() => {}}
+            disabled={isPending}
+            onClick={() => {
+              onProviderSignUp("github");
+            }}
             variant="outline"
             size="lg"
             className="w-full relative"
