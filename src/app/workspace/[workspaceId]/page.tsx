@@ -1,11 +1,8 @@
-interface WorkspacePageProps {
-  params: Promise<{
-    workspaceId: string;
-  }>;
-}
+"use client";
+import { useWorkspaceId } from "@/hooks/use-workspace-id";
 
-const WorkspacePage: React.FC<WorkspacePageProps> = async ({ params }) => {
-  const workspaceId = (await params).workspaceId;
+const WorkspacePage = () => {
+  const workspaceId = useWorkspaceId();
   return <div>ID: {workspaceId}</div>;
 };
 
