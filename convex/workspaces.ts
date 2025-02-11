@@ -73,3 +73,24 @@ export const getById = query({
     return await ctx.db.get(id);
   },
 });
+
+export const update = mutation({
+  args: { id: v.id("workspaces"), name: v.string() },
+  handler: async (ctx, { id, name }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", id).eq("userId", userId)
+      )
+      .unique();
+    if (!member || member.role !== "admin") throw new Error("Unauthorized");
+
+    await ctx.db.patch(id, { name });
+
+    return id;
+  },
+});
+
