@@ -9,9 +9,9 @@ import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useGetWorkspace } from "@/features/workspaces/api/use-get-workspace";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import WorkspaceHeader from "./workspace-header";
-import SidebarItem from "./sidebar-item";
-import { useChannels } from "@/features/channels/api/use-channels";
 import WorkspaceSection from "./workspace-section";
+import SidebarItem from "./sidebar-item";
+import { useGetChannels } from "@/features/channels/api/use-get-channels";
 
 const WorkspaceSidebar = () => {
   const workspaceId = useWorkspaceId();
@@ -21,7 +21,7 @@ const WorkspaceSidebar = () => {
   const { data: workspace, isLoading: workspaceLoading } = useGetWorkspace({
     id: workspaceId,
   });
-  const { data: channels, isLoading: channelsLoading } = useChannels({
+  const { data: channels, isLoading: channelsLoading } = useGetChannels({
     workspaceId,
   });
 
