@@ -16,21 +16,24 @@ const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({ children }) => {
   return (
     <div className="h-full">
       <Toolbar />
-      <div className="flex h-[calc(100vh-40px)]">
+      <div className="flex h-[calc(100vh-40px)] bg-[#3b0c3f]">
         <Sidebar />
         <ResizablePanelGroup
           direction="horizontal"
           autoSaveId="workspace-layout"
+          className="rounded-lg"
         >
           <ResizablePanel
             defaultSize={20}
             minSize={12}
-            className="bg-[#5e3c5f]"
+            className="bg-[#572758]"
           >
             <WorkspaceSidebar />
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel minSize={20}>{children}</ResizablePanel>
+          <ResizablePanel minSize={20} className="bg-white">
+            {children}
+          </ResizablePanel>
         </ResizablePanelGroup>
       </div>
     </div>

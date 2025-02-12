@@ -7,7 +7,7 @@ import SidebarButton from "./sidebar-button";
 const Sidebar = () => {
   const pathname = usePathname();
   return (
-    <aside className="w-[70px] h-full bg-[#481349] flex flex-col gap-y-4 items-center pt-2 pb-4">
+    <aside className="w-[70px] h-full bg-[#3b0c3f] flex flex-col gap-y-4 items-center pt-2 pb-4">
       <WorkspaceSwitcher />
       <SidebarButton
         icon={Home}
