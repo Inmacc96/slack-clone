@@ -8,7 +8,7 @@ const AuthScreen = () => {
   const [authState, setAuthState] = useState<AuthState>("signIn");
 
   return (
-    <div className="h-full flex items-center justify-center bg-[#5C3B58]">
+    <div className="h-full flex items-center justify-center bg-[#572758]">
       <div className="md:h-auto md:w-[420px]">
         {authState === "signIn" ? (
           <SignInCard setAuthState={setAuthState} />
