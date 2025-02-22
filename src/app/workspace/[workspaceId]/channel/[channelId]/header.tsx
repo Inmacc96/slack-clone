@@ -2,6 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { TrashIcon } from "lucide-react";
 import { FaChevronDown } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,7 +15,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useUpdateChannel } from "@/features/channels/api/use-update-channel";
+import { useRemoveChannel } from "@/features/channels/api/use-remove-channel";
 import { useChannelId } from "@/hooks/use-channel-id";
+import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { useConfirm } from "@/hooks/use-confirm";
 
 interface HeaderProps {
   title: string;
@@ -22,11 +26,19 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ title }) => {
   const channelId = useChannelId();
+  const workspaceId = useWorkspaceId();
+  const router = useRouter();
   const [value, setValue] = useState(title);
   const [editOpen, setEditOpen] = useState(false);
+  const [ConfirmDialog, confirm] = useConfirm(
+    "Delete this channel?",
+    "You are about to delete this channel. This action is irreversible"
+  );
 
   const { mutate: updateChannel, isPending: isUpdatingChannel } =
     useUpdateChannel();
+  const { mutate: removeChannel, isPending: isRemovingChannel } =
+    useRemoveChannel();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value.replace(/\s+/g, "-").toLowerCase());
@@ -38,8 +50,29 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
       { id: channelId, name: value },
       {
         onSuccess: () => {
-          toast.success("Channel updated correctly");
+          toast.success("Channel updated");
           setEditOpen(false);
+        },
+        onError: () => {
+          toast.error("Failed to update channel");
+        },
+      }
+    );
+  };
+
+  const handleRemove = async () => {
+    const ok = await confirm();
+    if (!ok) return;
+
+    removeChannel(
+      { id: channelId },
+      {
+        onSuccess: () => {
+          toast.success("Channel deleted");
+          router.replace(`/workspace/${workspaceId}`);
+        },
+        onError: () => {
+          toast.error("Failed to delete channel");
         },
       }
     );
@@ -47,6 +80,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
 
   return (
     <div className="bg-white border-b h-12 flex items-center px-4 overflow-hidden">
+      <ConfirmDialog />
       <Dialog>
         <DialogTrigger asChild>
           <Button
@@ -103,7 +137,11 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
                 </form>
               </DialogContent>
             </Dialog>
-            <button className="flex items-center gap-x-2 px-5 py-4 bg-white rounded-lg cursor-pointer border hover:bg-gray-50 text-rose-600">
+            <button
+              disabled={isRemovingChannel}
+              className="flex items-center gap-x-2 px-5 py-4 bg-white rounded-lg cursor-pointer border hover:bg-gray-50 text-rose-600"
+              onClick={handleRemove}
+            >
               <TrashIcon className="size-4" />
               <p className="text-sm font-semibold">Delete Channel</p>
             </button>
