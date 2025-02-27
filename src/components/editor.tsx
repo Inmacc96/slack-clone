@@ -200,11 +200,18 @@ const Editor: React.FC<EditorProps> = ({
           )}
         </div>
       </div>
-      <div className="p-2 text-xs text-muted-foreground flex justify-end">
-        <p>
-          <strong>Shift + Return</strong> to add a new line
-        </p>
-      </div>
+      {variant === "create" && (
+        <div
+          className={cn(
+            "p-2 text-xs text-muted-foreground flex justify-end opacity-0 transition",
+            !isEmpty && "opacity-100"
+          )}
+        >
+          <p>
+            <strong>Shift + Return</strong> to add a new line
+          </p>
+        </div>
+      )}
     </div>
   );
 };
