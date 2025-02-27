@@ -124,3 +124,14 @@ body {
   font-weight: 400 !important;
   @apply truncate;
 }
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
