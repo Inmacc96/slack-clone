@@ -75,8 +75,14 @@ const Editor: React.FC<EditorProps> = ({
             enter: {
               key: "Enter",
               handler: () => {
-                // TODO: Submit form
-                return;
+                const text = quill.getText();
+                const addedImage = imageElementRef.current?.files?.[0] || null;
+                const isEmpty =
+                  !addedImage &&
+                  text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
+                if (isEmpty) return;
+                const body = JSON.stringify(quill.getContents());
+                submitRef?.current?.({ image: addedImage, body });
               },
             },
             shift_enter: {
@@ -118,7 +124,7 @@ const Editor: React.FC<EditorProps> = ({
     };
   }, [innerRef]);
 
-  const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
+  const isEmpty = !image && text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
 
   const toggleToolbar = () => {
     setIsToolbarVisible((current) => !current);
@@ -205,13 +211,18 @@ const Editor: React.FC<EditorProps> = ({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {}}
+                onClick={onCancel}
                 disabled={disabled}
               >
                 Cancel
               </Button>
               <Button
-                onClick={() => {}}
+                onClick={() => {
+                  onSubmit({
+                    image,
+                    body: JSON.stringify(quillRef.current?.getContents()),
+                  });
+                }}
                 disabled={disabled || isEmpty}
                 size="sm"
                 className="bg-[#007a5a] hover:bg-[#007a5a]/80 text-white"
@@ -223,7 +234,12 @@ const Editor: React.FC<EditorProps> = ({
           {variant === "create" && (
             <Button
               disabled={disabled || isEmpty}
-              onClick={() => {}}
+              onClick={() => {
+                onSubmit({
+                  image,
+                  body: JSON.stringify(quillRef.current?.getContents()),
+                });
+              }}
               size="iconSm"
               className={cn(
                 "ml-auto",
