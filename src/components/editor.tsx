@@ -1,4 +1,10 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useImperativeHandle,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import Image from "next/image";
 import Quill, { type QuillOptions } from "quill";
 import { Delta, Op } from "quill/core";
@@ -20,7 +26,8 @@ interface EditorProps {
   placeholder?: string;
   defaultValue?: Delta | Op[];
   disabled?: boolean;
-  innerRef?: React.RefObject<Quill | null>;
+  innerRef?: React.RefObject<{ clearEditor: () => void } | null>;
+  editorQuillRef?: React.RefObject<Quill | null>;
   variant?: "create" | "update";
 }
 
@@ -31,6 +38,7 @@ const Editor: React.FC<EditorProps> = ({
   defaultValue = [],
   disabled = false,
   innerRef,
+  editorQuillRef,
   variant = "create",
 }) => {
   const [text, setText] = useState("");
@@ -51,6 +59,13 @@ const Editor: React.FC<EditorProps> = ({
     defaultValueRef.current = defaultValue;
     disabledRef.current = disabled;
   });
+
+  useImperativeHandle(innerRef, () => ({
+    clearEditor: () => {
+      quillRef.current?.setContents([]);
+      setImage(null);
+    },
+  }));
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -101,8 +116,8 @@ const Editor: React.FC<EditorProps> = ({
     quillRef.current = quill;
     quillRef.current.focus();
 
-    if (innerRef) {
-      innerRef.current = quill;
+    if (editorQuillRef) {
+      editorQuillRef.current = quill;
     }
 
     quill.setContents(defaultValueRef.current);
@@ -118,11 +133,11 @@ const Editor: React.FC<EditorProps> = ({
       if (quillRef.current) {
         quillRef.current = null;
       }
-      if (innerRef) {
-        innerRef.current = null;
+      if (editorQuillRef) {
+        editorQuillRef.current = null;
       }
     };
-  }, [innerRef]);
+  }, [editorQuillRef]);
 
   const isEmpty = !image && text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
 
@@ -149,7 +164,12 @@ const Editor: React.FC<EditorProps> = ({
         onChange={(e) => setImage(e.target.files![0])}
         className="hidden"
       />
-      <div className="flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
+      <div
+        className={cn(
+          "flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white",
+          disabled && "opacity-50"
+        )}
+      >
         <div ref={containerRef} className="h-full ql-custom" />
         {!!image && (
           <div className="p-2">
