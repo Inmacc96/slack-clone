@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 import { paginationOptsValidator } from "convex/server";
 const populateReactions = (ctx: QueryCtx, messageId: Id<"messages">) => {
   return ctx.db
@@ -96,7 +96,62 @@ export const get = query({
       .order("desc")
       .paginate(paginationOpts);
 
-    return results;
+    return {
+      ...results,
+      page: await Promise.all(
+        results.page
+          .map(async (message) => {
+            const member = await populateMember(ctx, message.memberId);
+            const user = member ? await populateUser(ctx, member.userId) : null;
+            if (!member || !user) return null;
+            const reactions = await populateReactions(ctx, message._id);
+            const thread = await populateThread(ctx, message._id);
+            const image = message.image
+              ? await ctx.storage.getUrl(message.image)
+              : undefined;
+
+            const reactionsWithCounts = reactions.reduce<
+              (Doc<"reactions"> & {
+                count: number;
+                memberIds: Id<"members">[];
+              })[]
+            >((acc, reaction) => {
+              const existingReaction = acc.find(
+                (r) => r.value === reaction.value
+              );
+              if (existingReaction) {
+                existingReaction.memberIds = Array.from(
+                  new Set([...existingReaction.memberIds, reaction.memberId])
+                );
+                existingReaction.count++;
+              } else {
+                acc.push({
+                  ...reaction,
+                  count: 1,
+                  memberIds: [reaction.memberId],
+                });
+              }
+              return acc;
+            }, []);
+            const reactionsWithoutMemberIdProperty = reactionsWithCounts.map(
+              ({ memberId, ...rest }) => rest
+            );
+
+            return {
+              ...message,
+              image,
+              member,
+              user,
+              reactions: reactionsWithoutMemberIdProperty,
+              thread,
+            };
+          })
+          .filter(
+            (message): message is NonNullable<typeof message> =>
+              message !== null
+          )
+      ),
+    };
   },
 });
 
@@ -137,7 +192,6 @@ export const create = mutation({
       channelId,
       conversationId: _conversationId,
       parentMessageId,
-      updatedAt: Date.now(),
     });
   },
 });
