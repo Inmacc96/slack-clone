@@ -65,6 +65,9 @@ const Editor: React.FC<EditorProps> = ({
     clearEditor: () => {
       quillRef.current?.setContents([]);
       setImage(null);
+      if (imageElementRef.current) {
+        imageElementRef.current.value = "";
+      }
     },
   }));
 
