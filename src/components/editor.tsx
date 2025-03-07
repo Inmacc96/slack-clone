@@ -17,6 +17,7 @@ import EmojiPopover from "./emoji-popover";
 import Hint from "./hint";
 
 import "quill/dist/quill.snow.css";
+import { isEmptyMessageText } from "@/helpers";
 
 type EditorValue = { image: File | null; body: string };
 
@@ -92,9 +93,7 @@ const Editor: React.FC<EditorProps> = ({
               handler: () => {
                 const text = quill.getText();
                 const addedImage = imageElementRef.current?.files?.[0] || null;
-                const isEmpty =
-                  !addedImage &&
-                  text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
+                const isEmpty = !addedImage && isEmptyMessageText(text);
                 if (isEmpty) return;
                 const body = JSON.stringify(quill.getContents());
                 submitRef?.current?.({ image: addedImage, body });
@@ -139,7 +138,7 @@ const Editor: React.FC<EditorProps> = ({
     };
   }, [editorQuillRef]);
 
-  const isEmpty = !image && text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
+  const isEmpty = !image && isEmptyMessageText(text);
 
   const toggleToolbar = () => {
     setIsToolbarVisible((current) => !current);
