@@ -213,3 +213,22 @@ export const update = mutation({
     return id;
   },
 });
+
+export const remove = mutation({
+  args: { id: v.id("messages") },
+  handler: async (ctx, { id }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
+    const message = await ctx.db.get(id);
+    if (!message) throw new Error("Message not found");
+
+    const member = await getMember(ctx, message.workspaceId, userId);
+    if (!member || message.memberId !== member._id)
+      throw new Error("Unauthorized");
+
+    await ctx.db.delete(id);
+
+    return id;
+  },
+});
