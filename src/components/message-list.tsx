@@ -1,5 +1,6 @@
 import { differenceInMinutes, format } from "date-fns";
 import Message from "./message";
+import ChannelHero from "./channel-hero";
 import { GetMessagesReturnType } from "@/features/messages/api/use-get-messages";
 import { formatDateLabel } from "@/helpers";
 
@@ -83,6 +84,9 @@ const MessageList: React.FC<MessageListProps> = ({
           })}
         </div>
       ))}
+      {variant === "channel" && channelName && channelCreationTime && (
+        <ChannelHero name={channelName} creationTime={channelCreationTime} />
+      )}
     </div>
   );
 };
