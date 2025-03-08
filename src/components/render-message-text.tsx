@@ -36,7 +36,11 @@ const RendererMessageText: React.FC<RendererMessageTextProps> = ({ value }) => {
 
   if (isEmpty) return null;
 
-  return <div ref={rendererRef} className="ql-editor ql-renderer" />;
+  return (
+    <div className="ql-snow">
+      <div ref={rendererRef} className="ql-editor ql-renderer" />
+    </div>
+  );
 };
 
 export default RendererMessageText;
