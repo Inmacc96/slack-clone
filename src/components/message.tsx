@@ -1,15 +1,19 @@
 import dynamic from "next/dynamic";
+import { toast } from "sonner";
 import Hint from "./hint";
 import Thumbnail from "./thumbnail";
 import Toolbar from "./toolbar";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
+import { useUpdateMessage } from "@/features/messages/api/use-update-message";
 import { Doc, Id } from "../../convex/_generated/dataModel";
 import { formatFullTime, formatTime, formatTimeWithPeriod } from "@/helpers";
+import { cn } from "@/lib/utils";
 
 const RendererMessageText = dynamic(
   () => import("@/components/render-message-text"),
   { ssr: false }
 );
+const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
 type Reaction = Omit<Doc<"reactions">, "memberId"> & {
   count: number;
@@ -55,27 +59,64 @@ const Message: React.FC<MessageProps> = ({
   threadCount,
   threadTimestamp,
 }) => {
+  const { mutate: updateMessage, isPending: isUpdatingMessage } =
+    useUpdateMessage();
+
+  const isPending = isUpdatingMessage;
+
+  const handleUpdate = ({ body }: { body: string }) => {
+    updateMessage(
+      { id, body },
+      {
+        onSuccess: () => {
+          toast.success("Message updated");
+          setEditingId(null);
+        },
+        onError: () => {
+          toast.error("Failed to update message");
+        },
+      }
+    );
+  };
+
   if (isCompact) {
     return (
-      <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative">
+      <div
+        className={cn(
+          "flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative",
+          isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]"
+        )}
+      >
         <div className="flex items-start gap-2">
           <Hint label={formatFullTime(new Date(createdAt))}>
             <button className="w-10 shrink-0 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 leading-[22px] text-center hover:underline">
               {formatTime(new Date(createdAt))}
             </button>
           </Hint>
-          <div className="flex flex-col w-full">
-            <RendererMessageText value={body} />
-            {image ? <Thumbnail url={image} /> : null}
-            {updatedAt ? (
-              <span className="text-xs text-muted-foreground">(edited)</span>
-            ) : null}
-          </div>
+          {isEditing ? (
+            <div className="size-full">
+              <Editor
+                onSubmit={handleUpdate}
+                disabled={isPending}
+                defaultValue={JSON.parse(body)}
+                onCancel={() => setEditingId(null)}
+                variant="update"
+              />
+            </div>
+          ) : (
+            <div className="flex flex-col w-full">
+              <RendererMessageText value={body} />
+              {image ? <Thumbnail url={image} /> : null}
+              {updatedAt ? (
+                <span className="text-xs text-muted-foreground">(edited)</span>
+              ) : null}
+            </div>
+          )}
         </div>
         {!isEditing && (
           <Toolbar
             isAuthor={isAuthor}
-            isPending={false}
+            isPending={isPending}
             handleEdit={() => setEditingId(id)}
             handleThread={() => {}}
             handleDelete={() => {}}
@@ -90,7 +131,12 @@ const Message: React.FC<MessageProps> = ({
   const avatarFallback = authorName.charAt(0).toUpperCase();
 
   return (
-    <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative">
+    <div
+      className={cn(
+        "flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative",
+        isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]"
+      )}
+    >
       <div className="flex items-start gap-2">
         <button>
           <Avatar>
@@ -98,31 +144,43 @@ const Message: React.FC<MessageProps> = ({
             <AvatarFallback>{avatarFallback}</AvatarFallback>
           </Avatar>
         </button>
-        <div className="flex flex-col w-full overflow-hidden">
-          <div className="text-sm">
-            <button
-              onClick={() => {}}
-              className="font-bold text-primary hover:underline mr-2"
-            >
-              {authorName}
-            </button>
-            <Hint label={formatFullTime(new Date(createdAt))}>
-              <button className="text-xs text-muted-foreground hover:underline">
-                {formatTimeWithPeriod(new Date(createdAt))}
-              </button>
-            </Hint>
+        {isEditing ? (
+          <div className="size-full">
+            <Editor
+              onSubmit={handleUpdate}
+              disabled={isPending}
+              defaultValue={JSON.parse(body)}
+              onCancel={() => setEditingId(null)}
+              variant="update"
+            />
           </div>
-          <RendererMessageText value={body} />
-          {image ? <Thumbnail url={image} /> : null}
-          {updatedAt ? (
-            <span className="text-xs text-muted-foreground">(edited)</span>
-          ) : null}
-        </div>
+        ) : (
+          <div className="flex flex-col w-full overflow-hidden">
+            <div className="text-sm">
+              <button
+                onClick={() => {}}
+                className="font-bold text-primary hover:underline mr-2"
+              >
+                {authorName}
+              </button>
+              <Hint label={formatFullTime(new Date(createdAt))}>
+                <button className="text-xs text-muted-foreground hover:underline">
+                  {formatTimeWithPeriod(new Date(createdAt))}
+                </button>
+              </Hint>
+            </div>
+            <RendererMessageText value={body} />
+            {image ? <Thumbnail url={image} /> : null}
+            {updatedAt ? (
+              <span className="text-xs text-muted-foreground">(edited)</span>
+            ) : null}
+          </div>
+        )}
       </div>
       {!isEditing && (
         <Toolbar
           isAuthor={isAuthor}
-          isPending={false}
+          isPending={isPending}
           handleEdit={() => setEditingId(id)}
           handleThread={() => {}}
           handleDelete={() => {}}
