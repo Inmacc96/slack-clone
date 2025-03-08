@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { differenceInMinutes, format } from "date-fns";
 import Message from "./message";
 import ChannelHero from "./channel-hero";
 import { GetMessagesReturnType } from "@/features/messages/api/use-get-messages";
+import { useCurrentMember } from "@/features/members/api/use-current-member";
+import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { Id } from "../../convex/_generated/dataModel";
 import { formatDateLabel } from "@/helpers";
 
 const TIME_THRESHOLD = 5;
@@ -29,6 +33,12 @@ const MessageList: React.FC<MessageListProps> = ({
   isLoadingMore,
   canLoadMore,
 }) => {
+  const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
+
+  const workspaceId = useWorkspaceId();
+
+  const { data: currentMember } = useCurrentMember({ workspaceId });
+
   const groupedMessages = data?.reduce<Record<string, typeof data>>(
     (groups, message) => {
       const date = new Date(message._creationTime);
@@ -66,16 +76,16 @@ const MessageList: React.FC<MessageListProps> = ({
                 memberId={message.memberId}
                 authorImage={message.user.image}
                 authorName={message.user.name}
-                isAuthor={false}
+                isAuthor={message.memberId === currentMember?._id}
                 reactions={message.reactions}
                 body={message.body}
                 image={message.image}
                 updatedAt={message.updatedAt}
                 createdAt={message._creationTime}
-                isEditing={false}
-                setEditingId={() => {}}
+                isEditing={message._id === editingId}
+                setEditingId={setEditingId}
                 isCompact={isCompact}
-                hideThreadButton={false}
+                hideThreadButton={variant === "thread"}
                 threadTimestamp={message.thread.timestamp}
                 threadImage={message.thread.image}
                 threadCount={message.thread.count}

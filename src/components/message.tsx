@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import Hint from "./hint";
 import Thumbnail from "./thumbnail";
+import Toolbar from "./toolbar";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Doc, Id } from "../../convex/_generated/dataModel";
 import { formatFullTime, formatTime, formatTimeWithPeriod } from "@/helpers";
@@ -107,6 +108,17 @@ const Message: React.FC<MessageProps> = ({
           ) : null}
         </div>
       </div>
+      {!isEditing && (
+        <Toolbar
+          isAuthor={isAuthor}
+          isPending={false}
+          handleEdit={() => setEditingId(id)}
+          handleThread={() => {}}
+          handleDelete={() => {}}
+          handleReaction={() => {}}
+          hideThreadButton={hideThreadButton}
+        />
+      )}
     </div>
   );
 };
