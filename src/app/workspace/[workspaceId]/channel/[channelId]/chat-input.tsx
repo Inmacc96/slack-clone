@@ -79,6 +79,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ placeholder }) => {
     } finally {
       setIsPending(false);
       editorQuillRef.current?.enable(true);
+      editorQuillRef.current?.focus();
     }
   };
 
