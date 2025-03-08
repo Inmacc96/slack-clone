@@ -72,6 +72,17 @@ const Message: React.FC<MessageProps> = ({
             ) : null}
           </div>
         </div>
+        {!isEditing && (
+          <Toolbar
+            isAuthor={isAuthor}
+            isPending={false}
+            handleEdit={() => setEditingId(id)}
+            handleThread={() => {}}
+            handleDelete={() => {}}
+            handleReaction={() => {}}
+            hideThreadButton={hideThreadButton}
+          />
+        )}
       </div>
     );
   }
