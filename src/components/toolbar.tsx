@@ -1,4 +1,5 @@
-import { MessageSquareText, Pencil, Smile, Trash } from "lucide-react";
+import { MessageSquareText, Pencil, Trash } from "lucide-react";
+import { MdOutlineAddReaction } from "react-icons/md";
 import { Button } from "./ui/button";
 import Hint from "./hint";
 import EmojiPopover from "./emoji-popover";
@@ -30,7 +31,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           onEmojiSelect={(emoji) => handleReaction(emoji.native)}
         >
           <Button variant="ghost" size="iconSm" disabled={isPending}>
-            <Smile className="size-4" />
+            <MdOutlineAddReaction className="size-4" />
           </Button>
         </EmojiPopover>
         {!hideThreadButton && (
