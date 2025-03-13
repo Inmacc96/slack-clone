@@ -9,6 +9,7 @@ import { useUpdateMessage } from "@/features/messages/api/use-update-message";
 import { useRemoveMessage } from "@/features/messages/api/use-remove-message";
 import { useToggleReaction } from "@/features/reactions/api/use-toggle-reaction";
 import { useConfirm } from "@/hooks/use-confirm";
+import { usePanel } from "@/hooks/use-panel";
 import { Doc, Id } from "../../convex/_generated/dataModel";
 import { formatFullTime, formatTime, formatTimeWithPeriod } from "@/helpers";
 import { cn } from "@/lib/utils";
@@ -63,6 +64,8 @@ const Message: React.FC<MessageProps> = ({
   threadCount,
   threadTimestamp,
 }) => {
+  const { parentMessageId, onOpenMessage, onClose } = usePanel();
+
   const [ConfirmDialog, confirm] = useConfirm(
     "Delete message",
     "Are you sure you want to delete this message? This cannot be undone."
@@ -101,7 +104,10 @@ const Message: React.FC<MessageProps> = ({
       {
         onSuccess: () => {
           toast.success("Message deleted");
-          //TODO: Close thread if opened
+
+          if (parentMessageId === id) {
+            onClose();
+          }
         },
         onError: () => {
           toast.error("Failed to delete message");
@@ -167,7 +173,7 @@ const Message: React.FC<MessageProps> = ({
               isAuthor={isAuthor}
               isPending={isPending}
               handleEdit={() => setEditingId(id)}
-              handleThread={() => {}}
+              handleThread={() => onOpenMessage(id)}
               handleDelete={handleRemove}
               handleReaction={handleReaction}
               hideThreadButton={hideThreadButton}
@@ -237,7 +243,7 @@ const Message: React.FC<MessageProps> = ({
             isAuthor={isAuthor}
             isPending={isPending}
             handleEdit={() => setEditingId(id)}
-            handleThread={() => {}}
+            handleThread={() => onOpenMessage(id)}
             handleDelete={handleRemove}
             handleReaction={handleReaction}
             hideThreadButton={hideThreadButton}
