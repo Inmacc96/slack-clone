@@ -57,7 +57,7 @@ const Message: React.FC<MessageProps> = ({
   updatedAt,
   createdAt,
   isEditing,
-  isCompact,
+  isCompact = false,
   setEditingId,
   hideThreadButton,
   threadImage,
