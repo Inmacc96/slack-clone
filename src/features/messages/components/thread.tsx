@@ -3,9 +3,10 @@ import { AlertTriangle, Loader, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Message from "@/components/message";
 import { Id } from "../../../../convex/_generated/dataModel";
-import { useGetMessage } from "../api/use-get-message";
 import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { useGetMessage } from "../api/use-get-message";
+import ChatInput from "@/components/chat-input";
 
 interface ThreadProps {
   messageId: Id<"messages">;
@@ -64,7 +65,7 @@ const Thread: React.FC<ThreadProps> = ({ messageId, onClose }) => {
           <XIcon className="size-5 stroke-[1.5]" />{" "}
         </Button>
       </div>
-      <div>
+      <div className="mt-2">
         <Message
           id={message._id}
           memberId={message.memberId}
@@ -80,6 +81,9 @@ const Thread: React.FC<ThreadProps> = ({ messageId, onClose }) => {
           setEditingId={setEditingId}
           hideThreadButton
         />
+      </div>
+      <div className="px-4">
+        <ChatInput parentMessageId={messageId} placeholder="Reply..." />
       </div>
     </div>
   );

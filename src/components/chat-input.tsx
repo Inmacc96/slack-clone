@@ -4,29 +4,34 @@ import Quill from "quill";
 import { toast } from "sonner";
 import { useCreateMessage } from "@/features/messages/api/use-create-message";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
-import { useChannelId } from "@/hooks/use-channel-id";
 import { useGenerateUploadUrl } from "@/features/upload/api/use-generate-upload-url";
-import { Id } from "../../../../../../convex/_generated/dataModel";
+import { Id } from "../../convex/_generated/dataModel";
 
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
 interface ChatInputProps {
   placeholder: string;
+  channelId?: Id<"channels">;
+  parentMessageId?: Id<"messages">;
 }
 
 type CreateMessageValues = {
-  channelId: Id<"channels">;
   workspaceId: Id<"workspaces">;
+  channelId?: Id<"channels">;
+  parentMessageId?: Id<"messages">;
   body: string;
   image?: Id<"_storage">;
 };
 
-const ChatInput: React.FC<ChatInputProps> = ({ placeholder }) => {
+const ChatInput: React.FC<ChatInputProps> = ({
+  placeholder,
+  channelId,
+  parentMessageId,
+}) => {
   const [isPending, setIsPending] = useState(false);
   const editorRef = useRef<{ clearEditor: () => void } | null>(null);
   const editorQuillRef = useRef<Quill | null>(null);
   const workspaceId = useWorkspaceId();
-  const channelId = useChannelId();
   const { mutate: generateUploadUrl } = useGenerateUploadUrl();
   const { mutate: createMessage } = useCreateMessage();
 
@@ -45,6 +50,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ placeholder }) => {
         body,
         workspaceId,
         channelId,
+        parentMessageId,
         image: undefined,
       };
 
@@ -84,15 +90,13 @@ const ChatInput: React.FC<ChatInputProps> = ({ placeholder }) => {
   };
 
   return (
-    <div className="px-5 w-full">
-      <Editor
-        placeholder={placeholder}
-        onSubmit={handleSubmit}
-        disabled={isPending}
-        innerRef={editorRef}
-        editorQuillRef={editorQuillRef}
-      />
-    </div>
+    <Editor
+      placeholder={placeholder}
+      onSubmit={handleSubmit}
+      disabled={isPending}
+      innerRef={editorRef}
+      editorQuillRef={editorQuillRef}
+    />
   );
 };
 
