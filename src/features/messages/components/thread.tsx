@@ -2,11 +2,12 @@ import { useState } from "react";
 import { AlertTriangle, Loader, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Message from "@/components/message";
+import ChatInput from "@/components/chat-input";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { useChannelId } from "@/hooks/use-channel-id";
 import { useGetMessage } from "../api/use-get-message";
-import ChatInput from "@/components/chat-input";
 
 interface ThreadProps {
   messageId: Id<"messages">;
@@ -15,6 +16,7 @@ interface ThreadProps {
 
 const Thread: React.FC<ThreadProps> = ({ messageId, onClose }) => {
   const workspaceId = useWorkspaceId();
+  const channelId = useChannelId();
 
   const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
 
@@ -83,7 +85,11 @@ const Thread: React.FC<ThreadProps> = ({ messageId, onClose }) => {
         />
       </div>
       <div className="px-4">
-        <ChatInput parentMessageId={messageId} placeholder="Reply..." />
+        <ChatInput
+          channelId={channelId}
+          parentMessageId={messageId}
+          placeholder="Reply..."
+        />
       </div>
     </div>
   );
