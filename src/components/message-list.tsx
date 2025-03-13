@@ -16,7 +16,7 @@ interface MessageListProps {
   memberImage?: string;
   channelName?: string;
   channelCreationTime?: number;
-  variant?: "channel" | "thread" | "conversation";
+  variant?: "channel" | "conversation";
   data?: GetMessagesReturnType;
   loadMore: () => void;
   isLoadingMore: boolean;
