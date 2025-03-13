@@ -79,10 +79,11 @@ export const getById = query({
     const user = await populateUser(ctx, member.userId);
     if (!user) return null;
 
-    const reactions = await populateReactions(ctx, message._id);
     const image = message.image
       ? await ctx.storage.getUrl(message.image)
       : undefined;
+    const thread = await populateThread(ctx, message._id);
+    const reactions = await populateReactions(ctx, message._id);
 
     const reactionsWithCounts = reactions.reduce<
       (Doc<"reactions"> & {
@@ -115,6 +116,7 @@ export const getById = query({
       member,
       user,
       reactions: reactionsWithoutMemberIdProperty,
+      thread,
     };
   },
 });
@@ -125,10 +127,11 @@ export const get = query({
     conversationId: v.optional(v.id("conversations")),
     parentMessageId: v.optional(v.id("messages")),
     paginationOpts: paginationOptsValidator,
+    order: v.optional(v.union(v.literal("asc"), v.literal("desc"))),
   },
   handler: async (
     ctx,
-    { channelId, conversationId, parentMessageId, paginationOpts }
+    { channelId, conversationId, parentMessageId, paginationOpts, order }
   ) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");
@@ -151,7 +154,7 @@ export const get = query({
           .eq("parentMessageId", parentMessageId)
           .eq("conversationId", _conversationId)
       )
-      .order("desc")
+      .order(order ?? "desc")
       .paginate(paginationOpts);
 
     return {

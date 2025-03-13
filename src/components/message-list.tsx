@@ -9,8 +9,7 @@ import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import { useInfitineScroll } from "@/hooks/use-infinite-scroll";
 import { Id } from "../../convex/_generated/dataModel";
 import { formatDateLabel } from "@/helpers";
-
-const TIME_THRESHOLD = 5;
+import { TIME_THRESHOLD } from "@/constants";
 
 interface MessageListProps {
   memberName?: string;

@@ -8,6 +8,7 @@ interface UseGetMessagesProps {
   channelId?: Id<"channels">;
   conversationId?: Id<"conversations">;
   parentMessageId?: Id<"messages">;
+  order?: "asc" | "desc";
 }
 
 export type GetMessagesReturnType =
@@ -17,10 +18,11 @@ export const useGetMessages = ({
   channelId,
   conversationId,
   parentMessageId,
+  order,
 }: UseGetMessagesProps) => {
   const { results, status, loadMore } = usePaginatedQuery(
     api.messages.get,
-    { channelId, conversationId, parentMessageId },
+    { channelId, conversationId, parentMessageId, order },
     { initialNumItems: BATCH_SIZE }
   );
 

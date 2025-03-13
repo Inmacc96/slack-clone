@@ -43,6 +43,7 @@ interface MessageProps {
   threadImage?: string;
   threadCount?: number;
   threadTimestamp?: number;
+  showFullTime?: boolean;
 }
 
 const Message: React.FC<MessageProps> = ({
@@ -63,6 +64,7 @@ const Message: React.FC<MessageProps> = ({
   threadImage,
   threadCount,
   threadTimestamp,
+  showFullTime,
 }) => {
   const { parentMessageId, onOpenMessage, onClose } = usePanel();
 
@@ -225,7 +227,9 @@ const Message: React.FC<MessageProps> = ({
                 </button>
                 <Hint label={formatFullTime(new Date(createdAt))}>
                   <button className="text-xs text-muted-foreground hover:underline">
-                    {formatTimeWithPeriod(new Date(createdAt))}
+                    {showFullTime
+                      ? formatFullTime(new Date(createdAt))
+                      : formatTimeWithPeriod(new Date(createdAt))}
                   </button>
                 </Hint>
               </div>
