@@ -61,6 +61,64 @@ const getMember = async (
     .unique();
 };
 
+export const getById = query({
+  args: { id: v.id("messages") },
+  handler: async (ctx, { id }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
+
+    const message = await ctx.db.get(id);
+    if (!message) return null;
+
+    const currentMember = await getMember(ctx, message.workspaceId, userId);
+    if (!currentMember) return null;
+
+    const member = await populateMember(ctx, message.memberId);
+    if (!member) return null;
+
+    const user = await populateUser(ctx, member.userId);
+    if (!user) return null;
+
+    const reactions = await populateReactions(ctx, message._id);
+    const image = message.image
+      ? await ctx.storage.getUrl(message.image)
+      : undefined;
+
+    const reactionsWithCounts = reactions.reduce<
+      (Doc<"reactions"> & {
+        count: number;
+        memberIds: Id<"members">[];
+      })[]
+    >((acc, reaction) => {
+      const existingReaction = acc.find((r) => r.value === reaction.value);
+      if (existingReaction) {
+        existingReaction.memberIds = Array.from(
+          new Set([...existingReaction.memberIds, reaction.memberId])
+        );
+        existingReaction.count++;
+      } else {
+        acc.push({
+          ...reaction,
+          count: 1,
+          memberIds: [reaction.memberId],
+        });
+      }
+      return acc;
+    }, []);
+    const reactionsWithoutMemberIdProperty = reactionsWithCounts.map(
+      ({ memberId, ...rest }) => rest
+    );
+
+    return {
+      ...message,
+      image,
+      member,
+      user,
+      reactions: reactionsWithoutMemberIdProperty,
+    };
+  },
+});
+
 export const get = query({
   args: {
     channelId: v.optional(v.id("channels")),
