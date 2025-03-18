@@ -16,7 +16,7 @@ const ConversationHero: React.FC<ConversationHeroProps> = ({
       <div className="flex items-center gap-3 mb-2">
         <Avatar className="size-14">
           <AvatarImage src={image} />
-          <AvatarFallback>{avatarFallback}</AvatarFallback>
+          <AvatarFallback className="text-3xl">{avatarFallback}</AvatarFallback>
         </Avatar>
         <p className="text-xl font-bold">{name}</p>
       </div>
