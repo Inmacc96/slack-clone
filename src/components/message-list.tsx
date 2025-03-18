@@ -120,6 +120,7 @@ const MessageList: React.FC<MessageListProps> = ({
               threadTimestamp={message.thread.timestamp}
               threadImage={message.thread.image}
               threadCount={message.thread.count}
+              threadName={message.thread.name}
             />
           </div>
         );

@@ -4,6 +4,7 @@ import Hint from "./hint";
 import Thumbnail from "./thumbnail";
 import Toolbar from "./toolbar";
 import Reactions from "./reactions";
+import ThreadBar from "./thread-bar";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { useUpdateMessage } from "@/features/messages/api/use-update-message";
 import { useRemoveMessage } from "@/features/messages/api/use-remove-message";
@@ -43,6 +44,7 @@ interface MessageProps {
   threadImage?: string;
   threadCount?: number;
   threadTimestamp?: number;
+  threadName?: string;
   showFullTime?: boolean;
 }
 
@@ -64,6 +66,7 @@ const Message: React.FC<MessageProps> = ({
   threadImage,
   threadCount,
   threadTimestamp,
+  threadName,
   showFullTime,
 }) => {
   const { parentMessageId, onOpenMessage, onClose } = usePanel();
@@ -167,6 +170,13 @@ const Message: React.FC<MessageProps> = ({
                   </span>
                 ) : null}
                 <Reactions data={reactions} onChange={handleReaction} />
+                <ThreadBar
+                  count={threadCount}
+                  image={threadImage}
+                  name={threadName}
+                  timestamp={threadTimestamp}
+                  onClick={() => onOpenMessage(id)}
+                />
               </div>
             )}
           </div>
@@ -239,6 +249,13 @@ const Message: React.FC<MessageProps> = ({
                 <span className="text-xs text-muted-foreground">(edited)</span>
               ) : null}
               <Reactions data={reactions} onChange={handleReaction} />
+              <ThreadBar
+                count={threadCount}
+                image={threadImage}
+                name={threadName}
+                timestamp={threadTimestamp}
+                onClick={() => onOpenMessage(id)}
+              />
             </div>
           )}
         </div>

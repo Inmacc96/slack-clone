@@ -3,6 +3,7 @@ import { mutation, query, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Doc, Id } from "./_generated/dataModel";
 import { paginationOptsValidator } from "convex/server";
+
 const populateReactions = (ctx: QueryCtx, messageId: Id<"messages">) => {
   return ctx.db
     .query("reactions")
@@ -26,7 +27,7 @@ const populateThread = async (ctx: QueryCtx, messageId: Id<"messages">) => {
     )
     .collect();
   if (messages.length === 0) {
-    return { count: 0, images: undefined, timestamp: 0 };
+    return { count: 0, images: undefined, name: "", timestamp: 0 };
   }
 
   const lastMessage = messages[messages.length - 1];
@@ -35,6 +36,7 @@ const populateThread = async (ctx: QueryCtx, messageId: Id<"messages">) => {
     return {
       count: 0,
       image: undefined,
+      name: "",
       timestamp: 0,
     };
   }
@@ -44,6 +46,7 @@ const populateThread = async (ctx: QueryCtx, messageId: Id<"messages">) => {
   return {
     count: messages.length,
     image: lastMessageUser?.image,
+    name: lastMessageUser?.name,
     timestamp: lastMessage._creationTime,
   };
 };
