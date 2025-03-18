@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { Loader } from "lucide-react";
 import { differenceInMinutes, format } from "date-fns";
 import Message from "./message";
@@ -36,14 +36,42 @@ const MessageList: React.FC<MessageListProps> = ({
 }) => {
   const loadMoreRef = useInfitineScroll(loadMore, canLoadMore);
 
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const lastMessageRef = useRef<HTMLDivElement>(null);
+  const lastMessageId = useMemo(() => data?.[0]?._id, [data]);
+
   const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
 
   const workspaceId = useWorkspaceId();
 
   const { data: currentMember } = useCurrentMember({ workspaceId });
 
+  const scrollToBottom = () => {
+    if (!messagesEndRef.current) return;
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  };
+
+  useEffect(() => {
+    if (!lastMessageRef.current) return;
+
+    const lastImage = lastMessageRef.current.querySelector(
+      'img[alt="Message image"]'
+    ) as HTMLImageElement;
+
+    if (!lastImage) {
+      scrollToBottom();
+    } else {
+      lastImage.onload = scrollToBottom;
+
+      lastImage.onerror = scrollToBottom;
+    }
+  }, [lastMessageId]);
+
   return (
     <div className="flex-1 flex flex-col-reverse pb-4 overflow-y-scroll messages-scrollbar">
+      <div ref={messagesEndRef} />
       {data?.map((message, index) => {
         const prevMessage = data[index + 1];
         const isCompact =
@@ -63,7 +91,7 @@ const MessageList: React.FC<MessageListProps> = ({
           : null;
 
         return (
-          <div key={message._id}>
+          <div key={message._id} ref={index === 0 ? lastMessageRef : null}>
             {currentDate !== prevDate && (
               <div className="text-center my-2 relative">
                 <hr className="absolute top-1/2 left-0 right-0 border-t border-gray-300" />
@@ -87,7 +115,7 @@ const MessageList: React.FC<MessageListProps> = ({
               isEditing={message._id === editingId}
               setEditingId={setEditingId}
               isCompact={isCompact}
-              hideThreadButton={variant === "thread"}
+              hideThreadButton={false}
               threadTimestamp={message.thread.timestamp}
               threadImage={message.thread.image}
               threadCount={message.thread.count}
