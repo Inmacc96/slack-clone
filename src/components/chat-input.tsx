@@ -13,12 +13,14 @@ interface ChatInputProps {
   placeholder: string;
   channelId?: Id<"channels">;
   parentMessageId?: Id<"messages">;
+  conversationId?: Id<"conversations">;
 }
 
 type CreateMessageValues = {
   workspaceId: Id<"workspaces">;
   channelId?: Id<"channels">;
   parentMessageId?: Id<"messages">;
+  conversationId?: Id<"conversations">;
   body: string;
   image?: Id<"_storage">;
 };
@@ -27,6 +29,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   placeholder,
   channelId,
   parentMessageId,
+  conversationId,
 }) => {
   const [isPending, setIsPending] = useState(false);
   const editorRef = useRef<{ clearEditor: () => void } | null>(null);
@@ -51,6 +54,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
         workspaceId,
         channelId,
         parentMessageId,
+        conversationId,
         image: undefined,
       };
 

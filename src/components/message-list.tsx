@@ -3,6 +3,7 @@ import { Loader } from "lucide-react";
 import { differenceInMinutes, format } from "date-fns";
 import Message from "./message";
 import ChannelHero from "./channel-hero";
+import ConversationHero from "./conversation-hero";
 import { GetMessagesReturnType } from "@/features/messages/api/use-get-messages";
 import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
@@ -134,6 +135,9 @@ const MessageList: React.FC<MessageListProps> = ({
       )}
       {variant === "channel" && channelName && channelCreationTime && (
         <ChannelHero name={channelName} creationTime={channelCreationTime} />
+      )}
+      {variant === "conversation" && (
+        <ConversationHero name={memberName} image={memberImage} />
       )}
     </div>
   );
