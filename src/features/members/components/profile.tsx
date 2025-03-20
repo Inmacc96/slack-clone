@@ -151,7 +151,7 @@ const Profile: React.FC<ProfileProps> = ({ memberId, onClose }) => {
   const isAdmin = currentMember?.role === "admin";
   const isSelf = currentMember?._id === member._id;
 
-  const canChangeRole = isAdmin;
+  const canChangeRole = isAdmin && !isSelf;
   const canRemove = isAdmin && !isSelf;
   const canLeave = isSelf;
 

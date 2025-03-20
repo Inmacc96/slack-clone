@@ -100,23 +100,12 @@ export const update = mutation({
         q.eq("workspaceId", member.workspaceId).eq("userId", userId)
       )
       .unique();
-    if (!currentMember || currentMember.role !== "admin") {
+    if (
+      !currentMember ||
+      currentMember.role !== "admin" ||
+      member._id === currentMember._id
+    ) {
       throw new Error("Unauthorized");
-    }
-
-    const isSelf = member._id === currentMember._id;
-    const existingOtherAdmin = await ctx.db
-      .query("members")
-      .withIndex("by_workspace_id_role", (q) =>
-        q.eq("workspaceId", member.workspaceId).eq("role", "admin")
-      )
-      .filter((q) => q.neq(q.field("userId"), userId))
-      .first();
-
-    if (isSelf && role === "member" && !existingOtherAdmin) {
-      throw new Error(
-        "Cannot remove admin role: At least one admin is required."
-      );
     }
 
     if (member.role === role) {
