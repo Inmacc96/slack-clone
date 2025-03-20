@@ -12,7 +12,7 @@ interface ProfileProps {
 }
 
 const Profile: React.FC<ProfileProps> = ({ memberId, onClose }) => {
-  const { data: member, loading: isLoadingMember } = useGetMember({
+  const { data: member, isLoading: isLoadingMember } = useGetMember({
     id: memberId,
   });
 
