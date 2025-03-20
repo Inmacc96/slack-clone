@@ -104,6 +104,25 @@ export const update = mutation({
       throw new Error("Unauthorized");
     }
 
+    const isSelf = member._id === currentMember._id;
+    const existingOtherAdmin = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_role", (q) =>
+        q.eq("workspaceId", member.workspaceId).eq("role", "admin")
+      )
+      .filter((q) => q.neq(q.field("userId"), userId))
+      .first();
+
+    if (isSelf && role === "member" && !existingOtherAdmin) {
+      throw new Error(
+        "Cannot remove admin role: At least one admin is required."
+      );
+    }
+
+    if (member.role === role) {
+      return id;
+    }
+
     await ctx.db.patch(id, {
       role,
     });
@@ -137,12 +156,21 @@ export const remove = mutation({
       throw new Error("Unauthorized");
     }
 
-    if (member.role === "admin") {
-      throw new Error("Admin cannot be removed");
+    const isSelf = member._id === currentMember._id;
+    if (currentMember.role !== "admin" && !isSelf) {
+      throw new Error("Unauthorized");
     }
 
-    if (currentMember._id === member._id && currentMember.role === "admin") {
-      throw new Error("Cannot remove self if self is an admin");
+    const existingOtherAdmin = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_role", (q) =>
+        q.eq("workspaceId", member.workspaceId).eq("role", "admin")
+      )
+      .filter((q) => q.neq(q.field("userId"), userId))
+      .first();
+
+    if (currentMember.role === "admin" && isSelf && !existingOtherAdmin) {
+      throw new Error("Cannot remove yourself as the last admin.");
     }
 
     const [messages, reactions, conversations] = await Promise.all([
