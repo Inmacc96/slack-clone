@@ -1,11 +1,12 @@
 import { Loader, TriangleAlert } from "lucide-react";
-import { useGetMessages } from "@/features/messages/api/use-get-messages";
-import { Id } from "../../../../../../convex/_generated/dataModel";
-import { useGetMember } from "@/features/members/api/use-get-member";
-import { useMemberId } from "@/hooks/use-member-id";
+import Header from "./header";
 import MessageList from "@/components/message-list";
 import ChatInput from "@/components/chat-input";
-import Header from "./header";
+import { useMemberId } from "@/hooks/use-member-id";
+import { usePanel } from "@/hooks/use-panel";
+import { useGetMessages } from "@/features/messages/api/use-get-messages";
+import { useGetMember } from "@/features/members/api/use-get-member";
+import { Id } from "../../../../../../convex/_generated/dataModel";
 
 interface ConversationProps {
   id: Id<"conversations">;
@@ -13,6 +14,7 @@ interface ConversationProps {
 
 const Conversation: React.FC<ConversationProps> = ({ id }) => {
   const memberId = useMemberId();
+  const { onOpenProfile } = usePanel();
 
   const { results, status, loadMore } = useGetMessages({ conversationId: id });
   const { data: member, isLoading: memberLoading } = useGetMember({
@@ -38,7 +40,11 @@ const Conversation: React.FC<ConversationProps> = ({ id }) => {
 
   return (
     <div className="flex flex-col h-full">
-      <Header memberName={member.user.name} memberImage={member.user.image} />
+      <Header
+        memberName={member.user.name}
+        memberImage={member.user.image}
+        onClick={() => onOpenProfile(memberId)}
+      />
       <MessageList
         variant="conversation"
         memberName={member.user.name}
