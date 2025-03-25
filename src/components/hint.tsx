@@ -25,7 +25,7 @@ const Hint: React.FC<HintProps> = ({ label, children, side, align }) => {
           align={align}
           className="bg-black text-white border border-white/5"
         >
-          <p className="font-medium text-xs">{label}</p>
+          <p className="font-medium text-xs whitespace-pre-wrap">{label}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
