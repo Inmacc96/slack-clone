@@ -34,7 +34,7 @@ const MemberIdPage = () => {
 
   if (!data) {
     return (
-      <div className="h-full flex items-center justify-center">
+      <div className="h-full flex flex-col gap-2 items-center justify-center">
         <AlertTriangle className="size-5 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">
           Conversation not found
