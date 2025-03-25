@@ -40,7 +40,7 @@ const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({ children }) => {
             <WorkspaceSidebar />
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel minSize={20} className="bg-white">
+          <ResizablePanel minSize={20} className="bg-white" defaultSize={80}>
             {children}
           </ResizablePanel>
           {showPanel && (

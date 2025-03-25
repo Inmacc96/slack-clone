@@ -14,7 +14,7 @@ const Thumbnail: React.FC<ThumbanailProps> = ({ url }) => {
   return (
     <Dialog>
       <DialogTrigger>
-        <div className="relative overflow-hidden max-w-[50%] xl:max-w-[30%] border rounded-lg my-2 cursor-zoom-in">
+        <div className="relative overflow-hidden max-w-[80%] md:max-w-[300px] border rounded-lg my-2 cursor-zoom-in">
           <img
             src={url}
             alt="Message image"
