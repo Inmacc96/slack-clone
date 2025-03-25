@@ -51,7 +51,12 @@ const EmojiPopover: React.FC<EmojiPopoverProps> = ({
           </TooltipContent>
         </Tooltip>
         <PopoverContent className="p-0 w-full border-none shadow-now">
-          <Picker data={data} onEmojiSelect={onSelect} previewPosition="none" />
+          <Picker
+            data={data}
+            onEmojiSelect={onSelect}
+            previewPosition="none"
+            theme="light"
+          />
         </PopoverContent>
       </Popover>
     </TooltipProvider>
