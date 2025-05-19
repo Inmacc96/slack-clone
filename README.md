@@ -1,6 +1,6 @@
 # Slack Clone
 
-A full-featured Slack clone built with **Next.js 15**, **TailwindCSS**, and **Convex**. This project is based on [Code with Antonio tutorial](https://www.youtube.com/watch?v=lXITA5MZIiI&ab_channel=CodeWithAntonio)
+A full-featured Slack clone built with **Next.js 15**, **TailwindCSS**, **Typescript** and **Convex**. This project is based on [Code with Antonio tutorial](https://www.youtube.com/watch?v=lXITA5MZIiI&ab_channel=CodeWithAntonio)
 
 ## :pushpin: Table of contents
 
@@ -11,6 +11,22 @@ A full-featured Slack clone built with **Next.js 15**, **TailwindCSS**, and **Co
   - [Deploy](#package-deployment)
 - [Links](#link-links)
 - [Author](#woman-author)
+
+## 🧭 About the Project
+
+This project is a **modern Slack clone** — a real-time team communication platform designed to enable:
+
+- Instant messaging between team members (DMs)
+- Group discussions in organized channels
+- Workspace and user management
+- File sharing, reactions, and threads
+
+It is intended to **replicate core features of Slack** with a modern tech stack, while also serving as a **learning project** to explore:
+
+- Real-time databases (Convex)
+- Authentication flows (NextAuth v5)
+- UI component libraries (Shadcn UI)
+- Scalable architecture with TypeScript + Next.js
 
 ## :rocket: Features
 
@@ -33,6 +49,7 @@ A full-featured Slack clone built with **Next.js 15**, **TailwindCSS**, and **Co
 ### :computer: Frontend
 
 - [NextJS 15](https://nextjs.org/): React framework for building modern web apps.
+- [Typescript](https://www.typescriptlang.org/): Strongly typed programming language that builds on JavaScript.
 - [TailwindCSS](https://tailwindcss.com/): Utility-first CSS framework.
 - [Shadcn UI](https://ui.shadcn.com/): Accessible and customizable UI components.
 - [QuillJS](https://quilljs.com/): Rich text editor used for message input.
