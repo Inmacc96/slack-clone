@@ -4,6 +4,7 @@ A full-featured Slack clone built with **Next.js 15**, **TailwindCSS**, **Typesc
 
 ## :pushpin: Table of contents
 
+- [About the Project](#compass-about-the-project)
 - [Features](#rocket-features)
 - [Built with](#hammer-built-with)
   - [Frontend](#computer-frontend)
@@ -12,7 +13,7 @@ A full-featured Slack clone built with **Next.js 15**, **TailwindCSS**, **Typesc
 - [Links](#link-links)
 - [Author](#woman-author)
 
-## 🧭 About the Project
+## :compass: About the Project
 
 This project is a **modern Slack clone** — a real-time team communication platform designed to enable:
 
