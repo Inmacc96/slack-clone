@@ -13,7 +13,7 @@ import { MdSend } from "react-icons/md";
 import { ImageIcon, Smile, XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
-import EmojiPopover from "./emoji-popover";
+import EmojiPopover, { Emoji } from "./emoji-popover";
 import Hint from "./hint";
 
 import "quill/dist/quill.snow.css";
@@ -151,7 +151,7 @@ const Editor: React.FC<EditorProps> = ({
     }
   };
 
-  const onEmojiSelect = (emoji: any) => {
+  const onEmojiSelect = (emoji: Emoji) => {
     const quill = quillRef.current;
 
     quill?.insertText(quill?.getSelection()?.index || 0, emoji.native);

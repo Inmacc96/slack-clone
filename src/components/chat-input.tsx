@@ -84,7 +84,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
         throwError: true,
       });
       editorRef.current?.clearEditor();
-    } catch (err) {
+    } catch (_err) {
       toast.error("Failed to send message");
     } finally {
       setIsPending(false);
