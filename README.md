@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Slack Clone
 
-## Getting Started
+A full-featured Slack clone built with **Next.js 15**, **TailwindCSS**, and **Convex**. This project is based on [Code with Antonio tutorial](https://www.youtube.com/watch?v=lXITA5MZIiI&ab_channel=CodeWithAntonio)
 
-First, run the development server:
+## :pushpin: Table of contents
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- [Features](#rocket-features)
+- [Built with](#hammer-built-with)
+  - [Frontend](#computer-frontend)
+  - [Backend](#gear-backend)
+  - [Deploy](#package-deployment)
+- [Links](#link-links)
+- [Author](#woman-author)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## :rocket: Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- 📡 Real-time communication
+- ❤️ Reactions to messages
+- 🧵 Threaded conversations (replies)
+- ✏️ Edit messages
+- 🗑️ Delete messages
+- 🛡️ Role-based access control
+- 🌅 Image attachments
+- 🔐 Authentication with NextAuth v5
+- 🛰️ Create and manage channels
+- 🏢 Workspace creation
+- 📬 Invite system with invite codes
+- 💬 Direct messaging (DMs)
+- 🙍 User profiles
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## :hammer: Built with
 
-## Learn More
+### :computer: Frontend
 
-To learn more about Next.js, take a look at the following resources:
+- [NextJS 15](https://nextjs.org/): React framework for building modern web apps.
+- [TailwindCSS](https://tailwindcss.com/): Utility-first CSS framework.
+- [Shadcn UI](https://ui.shadcn.com/): Accessible and customizable UI components.
+- [QuillJS](https://quilljs.com/): Rich text editor used for message input.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### :gear: Backend
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [Convex](https://www.convex.dev/): A backend-as-a-service platform for modern web apps. Convex provides real-time data sync, serverless functions, and a reactive database out of the box.
 
-## Deploy on Vercel
+### :package: Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Frontend: [Vercel](https://vercel.com/)
+- Backend: [Convex](https://www.convex.dev/)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## :link: Links
+
+- Solution URL: [https://github.com/Inmacc96/slack-clone](https://github.com/Inmacc96/slack-clone)
+- Live Site URL: [https://slack-clone-chi-smoky.vercel.app](https://slack-clone-chi-smoky.vercel.app/)
+
+## :woman: Author
+
+- GitHub - [inmacc96](https://github.com/Inmacc96)
+- LinkedIn - [Inma Caballero Carrero](https://www.linkedin.com/in/inmacaballerocarrero/)
